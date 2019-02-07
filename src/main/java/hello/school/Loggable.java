@@ -14,13 +14,15 @@ public class Loggable {
 
 	Logger LOGGER = LoggerFactory.getLogger(Loggable.class);
 	
-	@Around("execution(* hello.school.*(..))")
-	public void log(JoinPoint jp) {
-		LOGGER.info("Action: %s", jp.getSignature().getName());
+//	@Around("execution(* hello.school.*.*(..))")
+//	public void log(JoinPoint jp) {
+//		LOGGER.info("Action: %s", jp.getSignature().getName());
+//	}
+	
+	@AfterReturning(pointcut="execution(* hello.school.*.*(..))",returning="value")
+	public void logReturn(JoinPoint jp, Object value) {
+		LOGGER.info("Action: {} with returning value of: {}", jp.getSignature().getName(),value);
 	}
 	
-	@AfterReturning(pointcut="execution(* hello.school.*(..))",returning="value")
-	public void logReturn(JoinPoint jp, Object value) {
-		LOGGER.info("Action: %s with returning value of: %s", jp.getSignature().getName(),value);
-	}
+	
 }

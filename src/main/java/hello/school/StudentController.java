@@ -27,6 +27,7 @@ public class StudentController {
 	@RequestMapping(path="/students/all",method=RequestMethod.GET)
 	public ResponseEntity<List<Student>> getAllStudents() {
 		return new ResponseEntity<List<Student>>(studentService.findAll(), HttpStatus.OK);
+		
 	}
 	
 	@RequestMapping(path="/students/{id}", method=RequestMethod.GET)
