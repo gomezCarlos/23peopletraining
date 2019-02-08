@@ -1,6 +1,7 @@
 package hello.school;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,8 +21,14 @@ public class StudentController {
 	private StudentService studentService;
 	
 	@RequestMapping(path="/students",method=RequestMethod.GET)
-	public Object getStudents(@RequestParam("page") int page, @RequestParam("size") int size) {
-		return studentService.getStudents(PageRequest.of(page, size));
+	public Object getStudents(@RequestParam(name="page", defaultValue="0") int page, @RequestParam(name="size", defaultValue="10") int size) {
+		Page<Student> pageable = studentService.getStudents(PageRequest.of(page, size));
+		StudentPage studentPage = new StudentPage();
+		studentPage.setStudents(pageable.getContent());
+		studentPage.setPage(new hello.school.Page());
+		studentPage.getPage().setPage(pageable.getNumber());
+		studentPage.getPage().setSize(pageable.getSize());
+		return studentPage;
 	}
 	
 	@RequestMapping(path="/students/all",method=RequestMethod.GET)

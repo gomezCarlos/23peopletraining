@@ -1,13 +1,22 @@
 package hello.school;
 
 import java.util.List;
+import java.util.ArrayList;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
 
+@Entity
 public class Course {
 	
+	@Id
+	@GeneratedValue
 	private Long id;
 	private String code;
 	private String name;
-	private List<Student> students;
+	@OneToMany
+	private List<Student> students = new ArrayList<Student>();
 	
 	public Course() {
 		super();
