@@ -2,6 +2,9 @@ package hello.school;
 
 import java.util.List;
 
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+
 public interface CourseService {
 
 	Course findById(Long id);
@@ -11,4 +14,6 @@ public interface CourseService {
 	List<Course> findAll();
 
 	void delete(Long id);
+
+	Page<Course> getCourses(Pageable pageable);
 }

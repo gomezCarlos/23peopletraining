@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+import javax.validation.Valid;
+
 @RestController
 public class StudentController {
 
@@ -23,8 +25,8 @@ public class StudentController {
 	@RequestMapping(path="/students",method=RequestMethod.GET)
 	public Object getStudents(@RequestParam(name="page", defaultValue="0") int page, @RequestParam(name="size", defaultValue="10") int size) {
 		Page<Student> pageable = studentService.getStudents(PageRequest.of(page, size));
-		StudentPage studentPage = new StudentPage();
-		studentPage.setStudents(pageable.getContent());
+		BasicPage studentPage = new BasicPage();
+		studentPage.setElements(pageable.getContent());
 		studentPage.setPage(new hello.school.Page());
 		studentPage.getPage().setPage(pageable.getNumber());
 		studentPage.getPage().setSize(pageable.getSize());
@@ -46,15 +48,13 @@ public class StudentController {
 	}
 	
 	@RequestMapping(path="/students", method=RequestMethod.POST)
-	public ResponseEntity<Student> saveStudent(@RequestBody Student student) {
+	public ResponseEntity<Student> saveStudent(@Valid @RequestBody Student student) {
 		return new ResponseEntity<Student>(studentService.save(student), HttpStatus.OK);
 	}
 	
 	@RequestMapping(path="/students/{id}",method=RequestMethod.PUT)
-	public ResponseEntity<Student> updateStudent(@RequestBody Student student, @PathVariable Long id) {
+	public ResponseEntity<Student> updateStudent(@Valid @RequestBody Student student, @PathVariable Long id) {
 		Student oldStudent = studentService.findById(id);
-		if(null == oldStudent )
-			return new ResponseEntity<Student>(oldStudent, HttpStatus.NOT_FOUND);
 		oldStudent.setFirstName(student.getFirstName());
 		oldStudent.setLastName(student.getLastName());
 		oldStudent.setAddress(student.getAddress());
@@ -64,8 +64,6 @@ public class StudentController {
 	@RequestMapping(path="/students/{id}", method=RequestMethod.DELETE)
 	public ResponseEntity<Student> delete(@PathVariable Long id) {
 		Student oldStudent = studentService.findById(id);
-		if(null == oldStudent )
-			return new ResponseEntity<Student>(oldStudent, HttpStatus.NOT_FOUND);
 		studentService.delete(id);
 		return new ResponseEntity<Student>(oldStudent, HttpStatus.OK);
 	}

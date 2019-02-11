@@ -3,6 +3,8 @@ package hello.school;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Entity
 public class Student {
@@ -10,9 +12,13 @@ public class Student {
 	@Id
 	@GeneratedValue
 	private Long id;
+	@NotNull
+	@Pattern(regexp="[0-9]{2}[.]?[0-9]{3}[.]?[0-9]{3}[\\-]?[0-9kK]")
+	private String rut;
 	private String firstName;
 	private String lastName;
 	private String address;
+	
 
 	public Student() {
 		super();
@@ -24,7 +30,7 @@ public class Student {
 	}
 	
 	public String toString() {
-		return String.format("Student: [name=%s %s]", firstName, lastName);
+		return String.format("Student: [rut=%s, name=%s %s]", rut, firstName, lastName);
 	}
 
 	public Long getId() {
@@ -58,4 +64,13 @@ public class Student {
 	public void setAddress(String address) {
 		this.address = address;
 	}
+
+	public String getRut() {
+		return rut;
+	}
+
+	public void setRut(String rut) {
+		this.rut = rut;
+	}
+	
 }
