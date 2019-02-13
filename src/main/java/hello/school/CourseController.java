@@ -3,16 +3,18 @@ package hello.school;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CourseController {
 	
@@ -22,64 +24,51 @@ public class CourseController {
 	@Autowired
 	private StudentService studentService;
 
-	@RequestMapping(path="/courses", method=RequestMethod.POST)
+	@PostMapping(path="/courses")
 	public ResponseEntity<Course> saveCourse(@RequestBody Course course){
-		return new ResponseEntity<Course>(courseService.save(course),HttpStatus.CREATED);
+		return new ResponseEntity<>(courseService.save(course),HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(path="courses/{id}/{studentId}")
+	@GetMapping(path="courses/{id}/{studentId}")
 	public ResponseEntity<Course> addStudent(@PathVariable Long id, @PathVariable Long studentId){
 		Course course = courseService.findById(id);
 		
 		Student student = studentService.findById(studentId);
-		if(null == course || null == student)
-			return new ResponseEntity<Course>(course, HttpStatus.NOT_FOUND);
 		course.getStudents().add(student);
 		courseService.save(course);
 		
-		return new ResponseEntity<Course>(course, HttpStatus.OK);
+		return new ResponseEntity<>(course, HttpStatus.OK);
 	}
 	
-	@RequestMapping(path="/courses/{id}",method=RequestMethod.GET)
+	@GetMapping(path="/courses/{id}")
 	public ResponseEntity<Course> getCourse(@PathVariable Long id){
 		Course oldCourse = courseService.findById(id);
-		if(null == oldCourse)
-			return new ResponseEntity<Course>(oldCourse, HttpStatus.NOT_FOUND);
-		return new ResponseEntity<Course>(oldCourse, HttpStatus.OK);
+		return new ResponseEntity<>(oldCourse, HttpStatus.OK);
 	}
 	
-	@RequestMapping(path="/courses/{id}",method=RequestMethod.PUT)
+	@PutMapping(path="/courses/{id}")
 	public ResponseEntity<Course> updateCourse(@PathVariable Long id, @RequestBody Course course){
 		Course oldCourse = courseService.findById(id);
-		if(null == oldCourse)
-			return new ResponseEntity<Course>(oldCourse, HttpStatus.NOT_FOUND);
 		oldCourse.setCode(course.getCode());
 		oldCourse.setName(course.getName());
-		return new ResponseEntity<Course>(courseService.save(oldCourse), HttpStatus.OK);
+		return new ResponseEntity<>(courseService.save(oldCourse), HttpStatus.OK);
 	}
 	
-	@RequestMapping(path="/courses", method=RequestMethod.GET)
-	public ResponseEntity<BasicPage> getPaginatedCourses(@RequestParam(name="page", defaultValue="0") int page, @RequestParam(name="size", defaultValue="10") int size) {
-		BasicPage coursesPage = new BasicPage();
+	@GetMapping(path="/courses")
+	public ResponseEntity<Page<Course>> getPaginatedCourses(@RequestParam(name="page", defaultValue="0") int page, @RequestParam(name="size", defaultValue="10") int size) {
 		Page<Course> pageable = courseService.getCourses(PageRequest.of(page, size));
-		coursesPage.setElements(pageable.getContent());
-		coursesPage.setPage(new hello.school.Page());
-		coursesPage.getPage().setPage(page);
-		coursesPage.getPage().setSize(size);
-		return new ResponseEntity<BasicPage>(coursesPage, HttpStatus.OK);
+		return new ResponseEntity<>(pageable, HttpStatus.OK);
 	}
-	@RequestMapping(path="/courses/all", method=RequestMethod.GET)
+	@GetMapping(path="/courses/all")
 	public List<Course> getAllCourses(){
 		return courseService.findAll();
 	}
 	
-	@RequestMapping(path="/courses/{id}", method=RequestMethod.DELETE)
+	@DeleteMapping(path="/courses/{id}")
 	public ResponseEntity<Course> deleteCourse(Long id) {
 		Course oldCourse = courseService.findById(id);
-		if(null == oldCourse)
-			return new ResponseEntity<Course>(oldCourse, HttpStatus.NOT_FOUND);
 		courseService.delete(id);
-		return new ResponseEntity<Course>(oldCourse, HttpStatus.OK);
+		return new ResponseEntity<>(oldCourse, HttpStatus.OK);
 	}
 
 	public CourseService getCourseService() {

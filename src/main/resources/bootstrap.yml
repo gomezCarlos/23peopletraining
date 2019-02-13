@@ -1,10 +1,3 @@
 spring:
   application:
     name: school
-  jpa:
-    hibernate:
-      ddl-auto: update
-eureka:
-  client:
-    serviceUrl:
-      defaultZone: ${SERVICE_URL_DEFAULT_ZONE}

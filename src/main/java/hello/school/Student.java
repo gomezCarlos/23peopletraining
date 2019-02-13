@@ -15,7 +15,9 @@ public class Student {
 	@NotNull
 	@Pattern(regexp="[0-9]{2}[.]?[0-9]{3}[.]?[0-9]{3}[\\-]?[0-9kK]")
 	private String rut;
+	@NotNull
 	private String firstName;
+	@NotNull
 	private String lastName;
 	private String address;
 	
@@ -25,8 +27,10 @@ public class Student {
 	}
 	
 	public Student(String firstName, String lastName) {
+		super();
 		this.firstName = firstName;
 		this.lastName = lastName;
+		
 	}
 	
 	public String toString() {

@@ -1,20 +1,21 @@
 package hello.school;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import java.util.List;
 
 import javax.validation.Valid;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class StudentController {
@@ -22,49 +23,42 @@ public class StudentController {
 	@Autowired
 	private StudentService studentService;
 	
-	@RequestMapping(path="/students",method=RequestMethod.GET)
+	@GetMapping(path="/students")
 	public Object getStudents(@RequestParam(name="page", defaultValue="0") int page, @RequestParam(name="size", defaultValue="10") int size) {
-		Page<Student> pageable = studentService.getStudents(PageRequest.of(page, size));
-		BasicPage studentPage = new BasicPage();
-		studentPage.setElements(pageable.getContent());
-		studentPage.setPage(new hello.school.Page());
-		studentPage.getPage().setPage(pageable.getNumber());
-		studentPage.getPage().setSize(pageable.getSize());
-		return studentPage;
+		return studentService.getStudents(PageRequest.of(page, size));
 	}
 	
-	@RequestMapping(path="/students/all",method=RequestMethod.GET)
+	@GetMapping(path="/students/all")
 	public ResponseEntity<List<Student>> getAllStudents() {
-		return new ResponseEntity<List<Student>>(studentService.findAll(), HttpStatus.OK);
+		return new ResponseEntity<>(studentService.findAll(), HttpStatus.OK);
 		
 	}
 	
-	@RequestMapping(path="/students/{id}", method=RequestMethod.GET)
+	@GetMapping(path="/students/{id}")
 	public ResponseEntity<Student> getStudent(@PathVariable Long id) {
-		Student oldStudent = studentService.findById(id);
-		if(null == oldStudent )
-			return new ResponseEntity<Student>(oldStudent, HttpStatus.NOT_FOUND);
-		return new ResponseEntity<Student>(oldStudent, HttpStatus.OK);
+		Student student = studentService.findById(id);
+		return new ResponseEntity<>(student, HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(path="/students", method=RequestMethod.POST)
+	@PostMapping(path="/students")
 	public ResponseEntity<Student> saveStudent(@Valid @RequestBody Student student) {
-		return new ResponseEntity<Student>(studentService.save(student), HttpStatus.OK);
+		return new ResponseEntity<>(studentService.save(student), HttpStatus.OK);
 	}
 	
-	@RequestMapping(path="/students/{id}",method=RequestMethod.PUT)
+	@PutMapping(path="/students/{id}")
 	public ResponseEntity<Student> updateStudent(@Valid @RequestBody Student student, @PathVariable Long id) {
 		Student oldStudent = studentService.findById(id);
 		oldStudent.setFirstName(student.getFirstName());
 		oldStudent.setLastName(student.getLastName());
 		oldStudent.setAddress(student.getAddress());
-		return new ResponseEntity<Student>(oldStudent, HttpStatus.OK);
+		oldStudent.setRut(student.getRut());
+		return new ResponseEntity<>(studentService.save(oldStudent), HttpStatus.OK);
 	}
 	
-	@RequestMapping(path="/students/{id}", method=RequestMethod.DELETE)
+	@DeleteMapping(path="/students/{id}")
 	public ResponseEntity<Student> delete(@PathVariable Long id) {
 		Student oldStudent = studentService.findById(id);
 		studentService.delete(id);
-		return new ResponseEntity<Student>(oldStudent, HttpStatus.OK);
+		return new ResponseEntity<>(oldStudent, HttpStatus.OK);
 	}
 }
