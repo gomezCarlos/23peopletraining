@@ -23,7 +23,7 @@ services:
       - spring-cloud-network
   eureka-server:
     container_name: eureka-server
-    image: eureka-server:latest
+    image: carlosegomez/eureka-server:latest
     expose:
       - 8761
     ports:
@@ -32,7 +32,7 @@ services:
       - spring-cloud-network
   students:
     container_name: students
-    image: students:latest
+    image: carlosegomez/students:latest
     environment:
       SPRING_APPLICATION_JSON: '{"spring":{"cloud": {"config":{"uri": "http://config-server:8888"}}}}'
     expose:
@@ -51,7 +51,7 @@ services:
       - database-server:database-server
   gateway:
     container_name: gateway
-    image: gateway:latest
+    image: carlosegomez/gateway:latest
     expose:
       - 9090
     ports:
