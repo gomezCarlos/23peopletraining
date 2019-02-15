@@ -12,7 +12,9 @@ services:
       - 5432
   config-server:
     container_name: config-server
-    image: config-server:latest
+    image: carlosegomez/config-server:latest
+    environment:
+      SPRING_APPLICATION_JSON: '{"spring":{"cloud":{"config":{"server":{"git":{"uri":"https://github.com/gomezCarlos/config-repo.git", "clone-on-start": true}}}}}}'
     expose:
       - 8888
     ports:
